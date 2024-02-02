@@ -1,13 +1,26 @@
-import json
 from typing import Any
 
-import requests
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import WebBaseLoader
 
 from src.constants import SETTINGS
-from src.loading.chunk_json import chunk_data
+from src.retrieval.vector_store import create_vector_store_from_documents
+
+
+def load_doc_route():
+    """Route to load primary document of focus into vector store"""
+
+    print("Loading primary document into vector store...")
+    document = get_doc_from_source()
+    print(document)
+    split_document = split_docs_array(document)
+
+    print(f"Number of documents: {len(split_document)}")
+
+    create_vector_store_from_documents(split_document, 'documents')
+
+    return "Documents loaded into vector store."
 
 
 def get_doc_from_source() -> Document:

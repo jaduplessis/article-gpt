@@ -19,6 +19,8 @@ chromadb = "^0.4.22"
 supabase = "^2.3.3"
 pydantic-settings = "^2.1.0"
 fake-useragent = "^1.4.0"
+selenium = "^4.17.2"
+pdfminer-six = "^20231228"
 
 
 [build-system]

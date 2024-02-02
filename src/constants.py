@@ -21,6 +21,7 @@ class Settings(BaseSettings):
 
     openai_api_key: SecretStr
     openai_model: str = "gpt-4"
+    openai_model_test: str = "gpt-3.5-turbo"
     temperature: float = 0.8
 
     docs_url: List[str] = [

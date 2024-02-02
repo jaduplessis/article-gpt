@@ -12,6 +12,8 @@ Your task is to rewrite the forthcoming article to match the exemplary articles.
   - Match the vibe of the exemplary articles
 
 Constraints: Use english spelling
+
+ If you have no comments, please write "No comments."
 """
 messages = [
             SystemMessagePromptTemplate.from_template(system_template),
