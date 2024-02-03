@@ -36,5 +36,7 @@ class Settings(BaseSettings):
     supabase_url: str
     supabase_service_key: SecretStr
 
+    bucket_name: str = 'article-gpt'
+
 
 SETTINGS = Settings()  # type: ignore

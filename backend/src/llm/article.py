@@ -1,8 +1,7 @@
-from constants import SETTINGS
-from llm.qa_chain import get_qa_chain
-from loading.loader import Loader
-from prompts.edits import create_edits_prompt
-from prompts.feedback import create_feedback_prompt
+from src.llm.qa_chain import get_qa_chain
+from src.loading.loader import Loader
+from src.prompts.edits import create_edits_prompt
+from src.prompts.feedback import create_feedback_prompt
 
 
 class ArticleGPT():
@@ -12,7 +11,7 @@ class ArticleGPT():
   
   """
   def __init__(self, file_name: str, save: bool = True, test: bool = False):
-    self.config = Loader(file_name, test).instantiate()
+    self.config = Loader(file_name).instantiate()
     self.save = save
     self.test = test
 

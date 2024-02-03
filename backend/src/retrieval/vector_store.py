@@ -3,7 +3,7 @@ from langchain.schema import Document
 from langchain_community.vectorstores import SupabaseVectorStore
 from supabase.client import Client, create_client
 
-from constants import SETTINGS
+from src.constants import SETTINGS
 
 
 def create_supabase_client() -> Client:

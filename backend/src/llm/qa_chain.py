@@ -1,11 +1,11 @@
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from langchain_openai import ChatOpenAI
-from llm.qa_prompt import qa_prompt
+from src.llm.qa_prompt import qa_prompt
 
-from constants import SETTINGS
-from retrieval.retriever import get_retriever
-from retrieval.vector_store import create_vector_store
+from src.constants import SETTINGS
+from src.retrieval.retriever import get_retriever
+from src.retrieval.vector_store import create_vector_store
 
 
 def get_qa_chain(test: bool = False) -> ConversationalRetrievalChain:

@@ -1,4 +1,3 @@
-from loading.types import Config
 
 def create_feedback_prompt(file: str) -> str:
   return f"""

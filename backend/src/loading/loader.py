@@ -1,24 +1,24 @@
 import os
-
-from loading.types import Config, FileConfig
-
+import boto3
+from src.loading.types import Config, FileConfig
+from src.constants import SETTINGS
 
 class Loader():
   """
   Loader class is used to load the file and provide the configuration for the file.
   """
-  def __init__(self, file_name: str, test: bool = False):
+  def __init__(self, file_name: str):
+    self.s3 = boto3.client('s3')
+    self.bucket_name = SETTINGS.bucket_name
     self.file_name = file_name
     self.file_config = self.config()
-    self.file = self.load_file(test)
+    self.file = self.load_file()
 
   def config(self) -> FileConfig:
     """Get the file configuration."""
     file_name = self.file_name
 
-    file_path = f"src/input/{file_name}"
-    if not os.path.exists(file_path):
-      raise FileNotFoundError("File does not exist.")
+    file_path = f"input/{file_name}"
 
     if not file_name.endswith(".md"):
       raise TypeError("File must be a markdown file.")
@@ -49,13 +49,11 @@ class Loader():
     )
   
 
-  def load_file(self, test) -> str:
-    """Load the file."""
-    with open(self.file_config.file_path, "r", encoding="utf-8") as file:
-      if test:
-        return file.read()[:500]
-      else:
-        return file.read()
+  def load_file(self) -> str:
+    """Load the file from S3."""
+    file_key = self.file_config.file_path
+    response = self.s3.get_object(Bucket=self.bucket_name, Key=file_key)
+    return response['Body'].read().decode('utf-8')
 
 
   def instantiate(self):

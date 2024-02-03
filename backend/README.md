@@ -59,3 +59,24 @@ Now, every time you are in your project directory your virtualenv will be activa
 ```bash
 poetry install --no-root
 ```
+
+
+## API
+
+The project includes an API built with [FastAPI](https://fastapi.tiangolo.com/). Its code can be found at `src/api`.
+
+The API is containerized using a [Docker](https://docs.docker.com/get-started/) image, built from the `Dockerfile` and `docker-compose.yml` at the root.
+
+### Environment Variables
+
+Copy .env_example to .env and fill in the values.
+
+### Build and start the API
+
+To build and start the API, use the following Makefile command:
+
+```bash
+make start-api
+```
+
+For more details on the API routes, check the automatically generated [swagger](https://learning.postman.com/docs/getting-started/importing-and-exporting-data/#importing-postman-data) at the `/docs` url.
