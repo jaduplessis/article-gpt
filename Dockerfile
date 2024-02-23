@@ -38,6 +38,7 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 # Copy API files
 COPY src ./src
+COPY .env ./.env
 
 # Start FastAPI
 CMD uvicorn src.main:app --host 0.0.0.0 --port 80 --reload
