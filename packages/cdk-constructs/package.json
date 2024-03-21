@@ -1,5 +1,5 @@
 {
-  "name": "@gen-ai-poc/cdk-constructs",
+  "name": "@article-gpt/cdk-constructs",
   "version": "0.1.0",
   "scripts": {
     "clean": "rm -rf node_modules",
@@ -20,7 +20,7 @@
   "dependencies": {
     "@aws-sdk/client-bedrock-agent": "^3.496.0",
     "@aws-sdk/client-secrets-manager": "^3.496.0",
-    "@gen-ai-poc/helpers": "workspace:^",
+    "@article-gpt/helpers": "workspace:^",
     "@pinecone-database/pinecone": "^2.0.1",
     "ulid": "^2.3.0"
   }

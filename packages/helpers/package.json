@@ -1,5 +1,5 @@
 {
-  "name": "@gen-ai-poc/helpers",
+  "name": "@article-gpt/helpers",
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {

@@ -1,5 +1,5 @@
 {
-  "name": "aleios-gen-ai-poc-internal",
+  "name": "article-gpt",
   "private": true,
   "workspaces": [
     "packages/*"

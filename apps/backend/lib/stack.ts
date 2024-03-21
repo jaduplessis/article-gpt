@@ -1,13 +1,10 @@
-import { getStage } from "@gen-ai-poc/helpers";
+import { getStage } from "@article-gpt/helpers";
 import { Stack } from "aws-cdk-lib";
 import { Construct } from "constructs";
-export class starterStack extends Stack {
+export class ArticleStack extends Stack {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
     const stage = getStage();
-
- 
- 
   }
 }
