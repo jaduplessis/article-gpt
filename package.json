@@ -1,0 +1,39 @@
+{
+  "name": "aleios-gen-ai-poc-internal",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "test": "turbo run test",
+    "test-inte": "turbo test-inte",
+    "lint": "turbo lint",
+    "lint-fix": "turbo run lint -- --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "test-type": "turbo run test-type",
+    "clean": "turbo clean && rm -rf node_modules",
+    "bootstrap": "turbo run bootstrap",
+    "deploy": "turbo run deploy",
+    "destroy": "turbo run destroy",
+    "ci:bootstrap": "turbo run ci:bootstrap",
+    "ci:deploy": "turbo run ci:deploy"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.10",
+    "@vitest/coverage-v8": "1.1.0",
+    "esbuild": "0.19.0",
+    "prettier": "3.1.1",
+    "turbo": "latest",
+    "vite": "5.0.0",
+    "vitest": "1.0.0"
+  },
+  "packageManager": "pnpm@8.9.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudwatch-logs": "^3.490.0"
+  }
+}

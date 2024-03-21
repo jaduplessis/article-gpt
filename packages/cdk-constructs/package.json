@@ -1,0 +1,27 @@
+{
+  "name": "@gen-ai-poc/cdk-constructs",
+  "version": "0.1.0",
+  "scripts": {
+    "clean": "rm -rf node_modules",
+    "test": "vitest run --coverage --passWithNoTests"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.130",
+    "@vitest/coverage-v8": "1.1.0",
+    "aws-cdk": "2.113.0",
+    "aws-cdk-lib": "2.122.0",
+    "constructs": "10.3.0",
+    "esbuild": "0.19.0",
+    "typescript": "5.3.2",
+    "vite": "5.0.0",
+    "vite-tsconfig-paths": "4.2.0",
+    "vitest": "1.1.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-agent": "^3.496.0",
+    "@aws-sdk/client-secrets-manager": "^3.496.0",
+    "@gen-ai-poc/helpers": "workspace:^",
+    "@pinecone-database/pinecone": "^2.0.1",
+    "ulid": "^2.3.0"
+  }
+}
