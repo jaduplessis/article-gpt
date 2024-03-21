@@ -1,7 +1,7 @@
-from src.llm.qa_chain import get_qa_chain
-from src.loading.loader import Loader
-from src.prompts.edits import create_edits_prompt
-from src.prompts.feedback import create_feedback_prompt
+from src_old.llm.qa_chain import get_qa_chain
+from src_old.loading.loader import Loader
+from src_old.prompts.edits import create_edits_prompt
+from src_old.prompts.feedback import create_feedback_prompt
 
 
 class ArticleGPT():

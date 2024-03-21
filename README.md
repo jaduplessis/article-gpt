@@ -48,8 +48,8 @@ Install [Docker Engine](https://docs.docker.com/engine/install/) to build and ru
 Create your virtual environment and link it to your project folder:
 
 ```bash
-pyenv virtualenv 3.11.7 github-api-rag
-pyenv local github-api-rag
+pyenv virtualenv 3.11.7 article-api-rag
+pyenv local article-api-rag
 ```
 
 Now, every time you are in your project directory your virtualenv will be activated thanks to `pyenv`!

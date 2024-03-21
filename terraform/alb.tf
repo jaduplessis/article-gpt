@@ -3,14 +3,15 @@
 resource "aws_security_group" "alb_sg" {
   name        = "alb-sg"
   description = "Allow web traffic to ALB"
-  vpc_id      = data.aws_vpc.default.id
+  # vpc_id      = data.aws_vpc.default.id
+  vpc_id      = aws_vpc.article_gpt_vpc.id
 
   ingress {
     from_port   = local.container_port
     to_port     = local.container_port
     protocol    = "tcp"
-    cidr_blocks = [data.aws_vpc.default.cidr_block]
-    # cidr_blocks = ["0.0.0.0/0"]
+    # cidr_blocks = [data.aws_vpc.default.cidr_block]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -26,7 +27,12 @@ resource "aws_lb" "alb" {
   name               = "article-gpt-alb"
   internal           = false
   load_balancer_type = "application"
-  subnets            = data.aws_subnet_ids.default.ids
+  # subnets            = data.aws_subnet_ids.default.ids
+  subnets            = [ 
+    aws_subnet.article_gpt_subnet_1.id, 
+    aws_subnet.article_gpt_subnet_2.id, 
+    aws_subnet.article_gpt_subnet_3.id 
+  ]
 
   security_groups    = [aws_security_group.alb_sg.id]
 }
@@ -36,7 +42,7 @@ resource "aws_lb_target_group" "alb_target_group" {
   name     = "article-gpt-target-group"
   port     = local.container_port
   protocol = "HTTP"
-  vpc_id   = data.aws_vpc.default.id
+  vpc_id   = aws_vpc.article_gpt_vpc.id
   target_type = "ip"
 
   health_check {

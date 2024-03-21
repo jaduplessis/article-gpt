@@ -4,8 +4,8 @@ from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import WebBaseLoader
 
-from src.constants import SETTINGS
-from src.retrieval.vector_store import create_vector_store_from_documents
+from src_old.constants import SETTINGS
+from src_old.retrieval.vector_store import create_vector_store_from_documents
 
 
 def load_doc_route():

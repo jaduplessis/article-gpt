@@ -7,15 +7,13 @@
 resource "aws_security_group" "fargate_sg" {
   name        = "fargate-service-sg"
   description = "Allow web traffic to Fargate service"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = aws_vpc.article_gpt_vpc.id
 
   ingress {
     from_port   = local.container_port
     to_port     = local.container_port
     protocol    = "tcp"
     security_groups = [aws_security_group.alb_sg.id] # Only allow traffic from the ALB
-    
-    # cidr_blocks = ["0.0.0.0/0"] # Allow traffic from anywhere
   }
 
   egress {
@@ -125,9 +123,14 @@ resource "aws_ecs_service" "fargate_service" {
   desired_count   = 1
 
   network_configuration {
-    subnets = data.aws_subnet_ids.default.ids
-    security_groups = [aws_security_group.fargate_sg.id]
-    assign_public_ip = true
+    # subnets = data.aws_subnet_ids.default.ids
+    subnets           = [ 
+      aws_subnet.article_gpt_subnet_1.id, 
+      aws_subnet.article_gpt_subnet_2.id, 
+      aws_subnet.article_gpt_subnet_3.id 
+    ]
+    security_groups   = [aws_security_group.fargate_sg.id]
+    assign_public_ip  = true
   }
 
   load_balancer {
