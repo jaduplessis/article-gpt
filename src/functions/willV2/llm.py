@@ -13,10 +13,10 @@ class WillV2:
   def __init__(self):
     ''' Constructor for the WillV2 class
     '''
-    self.ft_model = self.start_ft_model()
+    self.model = self.start_model()
 
 
-  def start_ft_model(self):
+  def start_model(self):
     ''' Function to start initialise the fine-tuned language model
   
     Returns:
@@ -45,7 +45,7 @@ class WillV2:
       )
     ]
     
-    response = self.ft_model.invoke(messages).content
+    response = self.model.invoke(messages).content
 
     return response
   

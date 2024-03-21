@@ -1,7 +1,7 @@
 import os
 import boto3
-from src_old.loading.types import Config, FileConfig
-from src_old.constants import SETTINGS
+from src.loading.types import Config, FileConfig
+from src.constants import SETTINGS
 
 class Loader():
   """

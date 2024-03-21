@@ -5,6 +5,7 @@ will = WillV2()
 
 def main(draft_file: str, versions: int, verbose: bool = True):
     sections = draft_file.split("\n\n")
+    sections = [sections[2]]
 
     def generate_version(section, index):
         responses = {}
@@ -15,7 +16,7 @@ def main(draft_file: str, versions: int, verbose: bool = True):
             response = will.invoke_ft(section)
             responses[i] = response
 
-        with open(f"willV2/responses_{index}.json", "w", encoding="utf-8") as file:
+        with open(f"data/output/responses_{index}.json", "w", encoding="utf-8") as file:
             json.dump(responses, file, indent=4)
 
 

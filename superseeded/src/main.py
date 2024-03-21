@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
-from src_old.llm.article import ArticleGPT
-from src_old.loading.document_loader import load_doc_route
-from src_old.types import GetFileOutput, HealthRouteOutput, LoadDocumentsOutput, GetEditsOutput
+from src.llm.article import ArticleGPT
+from src.loading.document_loader import load_doc_route
+from src.types import GetFileOutput, HealthRouteOutput, LoadDocumentsOutput, GetEditsOutput
 
 app = FastAPI()
 

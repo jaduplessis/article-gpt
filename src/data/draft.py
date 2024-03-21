@@ -16,9 +16,10 @@ text = """### **Introduction**
 
 
 - Walkthrough of creating a Slack app in the console
-- Event bus and lambdas act as a nervous system and muscles for detecting and enacting actions for efficient response
-- Establishing two example events as a foundation for future operations
-- Responding to channel messages with translated responses and rendering a basic homepage
-- Developing an efficient routing system to channel Slack requests through the event bus to lambdas
-- Ensuring a strong and agile solution to handle requests
+- This can forward events on to a CDK deployed serverless backend
+- An event bus can be used like a nervous system to forward events to lambdas that carry out actions
+- Two example events are explored: a message event and a reaction event
+  1. responding to channel messages with translated responses 
+  2. rendering a basic homepage
+- These examples provide frameworks for host of other applications
 """
