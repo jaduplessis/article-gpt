@@ -1,5 +1,5 @@
 type GetCdkHandlerPathProps = {
-  extension?: "js" | "ts" | "cjs" | "mjs";
+  extension?: "js" | "ts" | "cjs" | "mjs" | "py"
   fileName?: string;
 };
 

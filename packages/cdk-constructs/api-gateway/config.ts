@@ -1,47 +1,64 @@
-import { ApiDefinition, SpecRestApi } from "aws-cdk-lib/aws-apigateway";
-import { IFunction } from "aws-cdk-lib/aws-lambda";
+import { buildResourceName } from "@article-gpt/helpers";
+import { CfnOutput } from "aws-cdk-lib";
+import {
+  ApiKey,
+  ApiKeySourceType,
+  LambdaIntegration,
+  RestApi,
+  UsagePlan,
+} from "aws-cdk-lib/aws-apigateway";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
-import { readFileSync } from "fs";
-import { ServicePrincipal } from "aws-cdk-lib/aws-iam";
 
-export interface GenAiPocGatewayProps {
-  invokeFunction: IFunction;
-  generateUrlFunction: IFunction;
+interface RestApiFunctions {
+  function: NodejsFunction;
 }
 
-export class GenAiPocGateway extends SpecRestApi {
-  constructor(scope: Construct, id: string, props: GenAiPocGatewayProps) {
-    const { invokeFunction, generateUrlFunction } = props;
+interface ArticleGPTApiGatewayProps {
+  stage: string;
+  willV2: RestApiFunctions;
+}
 
-    let openApiSpec = readFileSync(__dirname + "/open_api.json", "utf8");
+export class ArticleGPTApiGateway extends Construct {
+  constructor(scope: Construct, id: string, props: ArticleGPTApiGatewayProps) {
+    super(scope, id);
 
-    // Replace placeholders separately
-    openApiSpec = openApiSpec.replace(
-      "${invoke_model}",
-      invokeFunction.functionArn,
-    );
-    openApiSpec = openApiSpec.replace(
-      "${generate_presigned_url}",
-      generateUrlFunction.functionArn,
-    );
+    const { stage, willV2 } = props;
 
-    // Parse the modified JSON string
-    openApiSpec = JSON.parse(openApiSpec);
-
-    super(scope, `${id}`, {
-      apiDefinition: ApiDefinition.fromInline(openApiSpec),
+    const api = new RestApi(this, "api-gateway", {
+      restApiName: buildResourceName(this, "api-gateway"),
+      deployOptions: {
+        stageName: stage,
+      },
+      defaultCorsPreflightOptions: {
+        allowOrigins: ["*"],
+        allowMethods: ["*"],
+      },
+      apiKeySourceType: ApiKeySourceType.HEADER,
     });
 
-    // Grant the API Gateway service principal permissions to invoke the lambda
-    invokeFunction.grantInvoke(
-      new ServicePrincipal("apigateway.amazonaws.com"),
-    );
-    generateUrlFunction.grantInvoke(
-      new ServicePrincipal("apigateway.amazonaws.com"),
-    );
+    const apiKey = new ApiKey(this, buildResourceName(this, "api-key"));
 
-    // Add a dependency to ensure the lambda function is deployed before the API Gateway
-    this.node.addDependency(invokeFunction);
-    this.node.addDependency(generateUrlFunction);
+    const usagePlan = new UsagePlan(this, "usage-plan", {
+      apiStages: [
+        {
+          api: api,
+          stage: api.deploymentStage,
+        },
+      ],
+    });
+
+    usagePlan.addApiKey(apiKey);
+
+    const willV2Generation = api.root.addResource("will-v2-generation");
+    const willV2Integration = new LambdaIntegration(willV2.function);
+    willV2Generation.addMethod("POST", willV2Integration, {
+      apiKeyRequired: true,
+    });
+
+    new CfnOutput(this, "apiKey", {
+      description: "API Key",
+      value: apiKey.keyId
+    });
   }
 }

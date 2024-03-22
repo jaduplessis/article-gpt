@@ -1,37 +1,39 @@
+import { sharedLambdaEsbuildConfig } from "@article-gpt/helpers";
+import { Duration } from "aws-cdk-lib";
+import { Role } from "aws-cdk-lib/aws-iam";
+import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
-import { Runtime } from "aws-cdk-lib/aws-lambda";
-import { Role } from "aws-cdk-lib/aws-iam";
-import {
-  ISecurityGroup,
-  ISubnet,
-  IVpc,
-  SubnetSelection,
-} from "aws-cdk-lib/aws-ec2";
-import { Duration } from "aws-cdk-lib";
 
-export interface GenAiPocLambdaProps {
+export interface ArticleGPTLambdaProps {
   lambdaEntry: string;
   environment?: Record<string, string>;
+  timeout?: Duration;
   role?: Role;
   memorySize?: number;
   runtime?: Runtime;
 }
 
-export class GenAiPocCustomResource extends NodejsFunction {
-  constructor(scope: Construct, id: string, props: GenAiPocLambdaProps) {
-    const { lambdaEntry, environment, memorySize, role, runtime } = props;
+export class ArticleGPTCustomResource extends NodejsFunction {
+  constructor(scope: Construct, id: string, props: ArticleGPTLambdaProps) {
+    const { lambdaEntry, environment, memorySize, role, timeout } = props;
 
     const functionName = `${id}-lambda`;
 
     super(scope, `${id}-lambda`, {
       functionName,
-      runtime: runtime ?? Runtime.NODEJS_20_X,
+      runtime: Runtime.NODEJS_18_X,
+      bundling: {
+        ...sharedLambdaEsbuildConfig,
+        metafile: true,
+        externalModules: [],
+      },
+      awsSdkConnectionReuse: true,
       entry: lambdaEntry,
-      memorySize,
+      memorySize: memorySize ?? 1024,
       environment,
       role,
-      timeout: Duration.seconds(30),
+      timeout: timeout ?? Duration.seconds(30),
     });
   }
 }
