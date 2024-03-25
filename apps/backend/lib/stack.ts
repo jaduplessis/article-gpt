@@ -18,7 +18,7 @@ export class ArticleStack extends Stack {
     new ArticleGPTApiGateway(this, "api-gateway", {
       stage,
       willV2,
-      stitch
+      stitch,
     });
   }
 }
