@@ -17,6 +17,7 @@ interface RestApiFunctions {
 interface ArticleGPTApiGatewayProps {
   stage: string;
   willV2: RestApiFunctions;
+  stitch: RestApiFunctions;
 }
 
 export class ArticleGPTApiGateway extends Construct {
@@ -50,9 +51,15 @@ export class ArticleGPTApiGateway extends Construct {
 
     usagePlan.addApiKey(apiKey);
 
-    const willV2Generation = api.root.addResource("will-v2-generation");
+    const willV2endPoint = api.root.addResource("will-v2-generation");
     const willV2Integration = new LambdaIntegration(willV2.function);
-    willV2Generation.addMethod("POST", willV2Integration, {
+    willV2endPoint.addMethod("POST", willV2Integration, {
+      apiKeyRequired: true,
+    });
+
+    const stitchEndPoint = api.root.addResource("stitch");
+    const stitchIntegration = new LambdaIntegration(props.stitch.function);
+    stitchEndPoint.addMethod("POST", stitchIntegration, {
       apiKeyRequired: true,
     });
 

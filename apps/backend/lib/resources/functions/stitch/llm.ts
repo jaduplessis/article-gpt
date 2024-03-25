@@ -4,12 +4,12 @@ import { HumanMessage, SystemMessage } from "langchain/schema";
 import { systemPrompt } from "./prompt";
 
 export const invoke = async (message: string): Promise<string> => {
-  
   const model = new ChatOpenAI({
     openAIApiKey: getEnvVariable("OPENAI_API_KEY"),
-    modelName: "ft:gpt-3.5-turbo-0125:aleios:willv2:94uyrpGH",
-    temperature: 0.75,
-    maxTokens: 1500,
+    modelName: "gpt-4",
+    temperature: 0.9,
+    maxTokens: 4500,
+    frequencyPenalty: 0.5,
   });
 
   const messages: (HumanMessage | SystemMessage)[] = [
