@@ -20,7 +20,7 @@ export class Stitch extends Construct {
       environment: {
         OPENAI_API_KEY,
       },
-      timeout: Duration.seconds(30),
+      timeout: Duration.seconds(300),
     });
   }
 }

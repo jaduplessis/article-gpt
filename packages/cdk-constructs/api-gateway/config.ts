@@ -18,6 +18,7 @@ interface ArticleGPTApiGatewayProps {
   stage: string;
   willV2: RestApiFunctions;
   stitch: RestApiFunctions;
+  uploadMarkdown: RestApiFunctions;
 }
 
 export class ArticleGPTApiGateway extends Construct {
@@ -60,6 +61,14 @@ export class ArticleGPTApiGateway extends Construct {
     const stitchEndPoint = api.root.addResource("stitch");
     const stitchIntegration = new LambdaIntegration(props.stitch.function);
     stitchEndPoint.addMethod("POST", stitchIntegration, {
+      apiKeyRequired: true,
+    });
+
+    const uploadMarkdownEndPoint = api.root.addResource("upload-markdown");
+    const uploadMarkdownIntegration = new LambdaIntegration(
+      props.uploadMarkdown.function
+    );
+    uploadMarkdownEndPoint.addMethod("POST", uploadMarkdownIntegration, {
       apiKeyRequired: true,
     });
 
