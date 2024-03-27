@@ -1,6 +1,6 @@
 import { getArg } from "../getArg";
 
-const defaultRegion = "ap-south-1";
+const defaultRegion = "eu-west-2";
 
 export const getRegion = (): string =>
   getArg({

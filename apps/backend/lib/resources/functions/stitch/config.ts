@@ -6,11 +6,15 @@ import { getCdkHandlerPath, buildResourceName, getEnvVariable } from "@article-g
 import { Duration } from "aws-cdk-lib";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 
+interface FunctionProps {
+  invoke: NodejsFunction;
+}
+
 
 export class Stitch extends Construct {
   public function: NodejsFunction;
 
-  constructor(scope: Construct, id: string) {
+  constructor(scope: Construct, id: string, { invoke }: FunctionProps) {
     super(scope, id);
 
     const OPENAI_API_KEY = getEnvVariable("OPENAI_API_KEY");
@@ -19,8 +23,12 @@ export class Stitch extends Construct {
       lambdaEntry: getCdkHandlerPath(__dirname),
       environment: {
         OPENAI_API_KEY,
+        INVOKE_FUNCTION: invoke.functionName,
+        SOURCE_FUNCTION: "Stitch",
       },
-      timeout: Duration.seconds(300),
+      timeout: Duration.minutes(5)
     });
+
+    invoke.grantInvoke(this.function);
   }
 }

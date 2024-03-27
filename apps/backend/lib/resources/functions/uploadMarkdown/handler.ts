@@ -1,5 +1,5 @@
 import { APIGatewayEvent } from "aws-lambda";
-import { processLineByLine } from "./processFIle";
+import { processLineByLine } from "../utils";
 
 interface RequestBody {
   message: string;

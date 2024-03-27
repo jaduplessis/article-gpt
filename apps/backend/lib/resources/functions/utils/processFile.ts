@@ -1,4 +1,3 @@
-import { text } from "stream/consumers";
 
 export enum SectionTypes {
   text = "text",
@@ -10,6 +9,7 @@ export interface FileSections {
   order: number;
   type: SectionTypes;
   content: string;
+  styledText?: string;
 }
 
 export const processLineByLine = (file: string) => {

@@ -3,7 +3,7 @@ import { Stack } from "aws-cdk-lib";
 import { Construct } from "constructs";
 
 import { ArticleGPTApiGateway } from "@article-gpt/cdk-constructs";
-import { Stitch, UploadMarkdown, WillV2 } from "./resources/functions";
+import { Invoke, Stitch, UploadMarkdown, WillV2 } from "./resources/functions";
 
 export class ArticleStack extends Stack {
   constructor(scope: Construct, id: string) {
@@ -11,9 +11,13 @@ export class ArticleStack extends Stack {
 
     const stage = getStage();
 
+    const invoke = new Invoke(this, "Invoke");
+
     const willV2 = new WillV2(this, "WillV2");
 
-    const stitch = new Stitch(this, "Stitch");
+    const stitch = new Stitch(this, "Stitch", {
+      invoke: invoke.function,
+    });
 
     const uploadMarkdown = new UploadMarkdown(this, "UploadMarkdown");
 
