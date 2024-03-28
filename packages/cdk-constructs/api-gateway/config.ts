@@ -28,7 +28,7 @@ export class ArticleGPTApiGateway extends Construct {
     const { stage, willV2 } = props;
 
     const api = new RestApi(this, "api-gateway", {
-      restApiName: buildResourceName(this, "api-gateway"),
+      restApiName: buildResourceName("api-gateway"),
       deployOptions: {
         stageName: stage,
       },
@@ -39,7 +39,7 @@ export class ArticleGPTApiGateway extends Construct {
       apiKeySourceType: ApiKeySourceType.HEADER,
     });
 
-    const apiKey = new ApiKey(this, buildResourceName(this, "api-key"));
+    const apiKey = new ApiKey(this, buildResourceName("api-key"));
 
     const usagePlan = new UsagePlan(this, "usage-plan", {
       apiStages: [

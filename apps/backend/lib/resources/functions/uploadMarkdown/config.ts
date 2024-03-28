@@ -12,7 +12,7 @@ export class UploadMarkdown extends Construct {
 
     this.function = new ArticleGPTCustomResource(
       this,
-      buildResourceName(this, "uploadMarkdown"),
+      buildResourceName("uploadMarkdown"),
       {
         lambdaEntry: getCdkHandlerPath(__dirname),
         timeout: Duration.seconds(30),

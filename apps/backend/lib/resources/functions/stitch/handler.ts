@@ -8,6 +8,7 @@ import { APIGatewayEvent } from "aws-lambda";
 import { ulid } from "ulid";
 import { FileSections, SectionTypes } from "../utils";
 import { llmConfiguration } from "./llm";
+import { InvocationEntity } from "../../dataModel/Invocation";
 
 interface RequestBody {
   payload: FileSections[];
@@ -55,6 +56,13 @@ export const handler = async (event: APIGatewayEvent) => {
     sourceFunction,
     modelProps: modelParams,
   };
+
+  // Save invocation to DynamoDB
+  await InvocationEntity.put({
+    genId,
+    status: "PENDING",
+    sourceFunction,
+  });
 
   // Invoke the lambda function
   const response = await lambda.send(

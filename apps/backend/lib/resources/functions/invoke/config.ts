@@ -12,7 +12,7 @@ export class Invoke extends Construct {
 
     this.function = new ArticleGPTCustomResource(
       this,
-      buildResourceName(this, "invoke"),
+      buildResourceName("invoke"),
       {
         lambdaEntry: getCdkHandlerPath(__dirname),
         timeout: Duration.minutes(5),

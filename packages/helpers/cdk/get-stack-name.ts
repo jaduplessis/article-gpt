@@ -1,8 +1,9 @@
-import { Stack } from "aws-cdk-lib";
-import { Construct } from "constructs";
+import { getArg } from "../getArg";
 
-export const getStackName = (scope: Construct): string => {
-  const stack = Stack.of(scope);
-
-  return stack.stackName;
+export const getStackName = (): string => {
+  return getArg({
+    cliArg: "stackName",
+    processEnvName: "STACK_NAME",
+    defaultValue: "article-gpt",
+  });
 };

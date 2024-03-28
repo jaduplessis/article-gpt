@@ -15,7 +15,7 @@ export class WillV2 extends Construct {
 
     const OPENAI_API_KEY = getEnvVariable("OPENAI_API_KEY");
 
-    this.function = new ArticleGPTCustomResource(this, buildResourceName(this, "willV2"), {
+    this.function = new ArticleGPTCustomResource(this, buildResourceName("willV2"), {
       lambdaEntry: getCdkHandlerPath(__dirname),
       environment: {
         OPENAI_API_KEY,

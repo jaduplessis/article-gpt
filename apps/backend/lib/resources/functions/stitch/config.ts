@@ -5,8 +5,10 @@ import {
 import { getCdkHandlerPath, buildResourceName, getEnvVariable } from "@article-gpt/helpers";
 import { Duration } from "aws-cdk-lib";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import { Table } from "aws-cdk-lib/aws-dynamodb";
 
 interface FunctionProps {
+  table: Table;
   invoke: NodejsFunction;
 }
 
@@ -14,12 +16,12 @@ interface FunctionProps {
 export class Stitch extends Construct {
   public function: NodejsFunction;
 
-  constructor(scope: Construct, id: string, { invoke }: FunctionProps) {
+  constructor(scope: Construct, id: string, { table, invoke }: FunctionProps) {
     super(scope, id);
 
     const OPENAI_API_KEY = getEnvVariable("OPENAI_API_KEY");
 
-    this.function = new ArticleGPTCustomResource(this, buildResourceName(this, "stitch"), {
+    this.function = new ArticleGPTCustomResource(this, buildResourceName("stitch"), {
       lambdaEntry: getCdkHandlerPath(__dirname),
       environment: {
         OPENAI_API_KEY,
@@ -30,5 +32,6 @@ export class Stitch extends Construct {
     });
 
     invoke.grantInvoke(this.function);
+    table.grantReadWriteData(this.function);
   }
 }
