@@ -127,6 +127,9 @@ importers:
       '@aws-sdk/lib-dynamodb':
         specifier: ^3.540.0
         version: 3.540.0(@aws-sdk/client-dynamodb@3.540.0)
+      dynamodb-toolbox:
+        specifier: ^0.9.2
+        version: 0.9.2(@aws-sdk/client-dynamodb@3.540.0)(@aws-sdk/lib-dynamodb@3.540.0)
       ulid:
         specifier: ^2.3.0
         version: 2.3.0

@@ -27,10 +27,6 @@ export class WebSocket extends Construct {
 
     const connectionTable = new DynamoDBConstruct(this, "ws-connection-table", {
       tableName: buildResourceName("WsConnectionTable"),
-      partitionKey: {
-        name: "connectionId",
-        type: AttributeType.STRING,
-      },
     }).table;
 
     const connectHandler = new WsConnect(this, "ws-connect", {
