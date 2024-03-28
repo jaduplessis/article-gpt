@@ -2,7 +2,7 @@ import { buildResourceName, getStage } from "@article-gpt/helpers";
 import { Stack } from "aws-cdk-lib";
 import { Construct } from "constructs";
 
-import { ArticleGPTApiGateway, DynamoDBConstruct } from "@article-gpt/cdk-constructs";
+import { ArticleGPTApiGateway, DynamoDBConstruct, WebSocket } from "@article-gpt/cdk-constructs";
 import { Invoke, Stitch, UploadMarkdown, WillV2 } from "./resources/functions";
 
 export class ArticleStack extends Stack {
@@ -26,11 +26,15 @@ export class ArticleStack extends Stack {
 
     const uploadMarkdown = new UploadMarkdown(this, "UploadMarkdown");
 
-    new ArticleGPTApiGateway(this, "api-gateway", {
+    const apiGateway = new ArticleGPTApiGateway(this, "api-gateway", {
       stage,
       willV2,
       stitch,
       uploadMarkdown,
+    });
+
+    new WebSocket(this, "websocket", {
+      restApi: apiGateway.restApi,
     });
   }
 }
