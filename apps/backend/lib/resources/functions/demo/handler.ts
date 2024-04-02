@@ -1,18 +1,11 @@
+import { WsConnectionEntity } from "@article-gpt/cdk-constructs/websocket";
 import { getEnvVariable } from "@article-gpt/helpers";
 import {
   ApiGatewayManagementApiClient,
   PostToConnectionCommand,
 } from "@aws-sdk/client-apigatewaymanagementapi";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { TextEncoder } from "util";
-import { WsConnectionEntity } from "../../dataModel/Connection";
-
-const dynamoDBClient = new DynamoDBClient({
-  region: process.env.AWS_REGION,
-});
-const dynamoDBDocClient = DynamoDBDocumentClient.from(dynamoDBClient);
 
 const apiGwManApiClient = new ApiGatewayManagementApiClient({
   region: getEnvVariable("AWS_REGION"),
@@ -32,7 +25,7 @@ export const handler = async function (
     await apiGwManApiClient.send(
       new PostToConnectionCommand({
         ConnectionId: connectionItems[ind].connectionId,
-        Data: textEncoder.encode("A new review published for book with id 123"),
+        Data: textEncoder.encode(`Hello, ${connectionItems[ind].connectionId}`),
       })
     );
   }
@@ -40,8 +33,7 @@ export const handler = async function (
   return {
     statusCode: 200,
     body: JSON.stringify({
-      id: 123,
-      review: "awesome book",
+      message: "Data sent to all connections.",
     }),
   };
 };

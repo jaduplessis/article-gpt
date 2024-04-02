@@ -1,9 +1,11 @@
 import { buildResourceName, getStage } from "@article-gpt/helpers";
-import { Stack } from "aws-cdk-lib";
+import { CfnOutput, Stack } from "aws-cdk-lib";
 import { Construct } from "constructs";
 
 import { ArticleGPTApiGateway, DynamoDBConstruct, WebSocket } from "@article-gpt/cdk-constructs";
-import { Invoke, Stitch, UploadMarkdown, WillV2 } from "./resources/functions";
+import { Invoke, Stitch, UploadMarkdown, WillV2, WsDemo } from "./resources/functions";
+import { HttpMethod } from "aws-cdk-lib/aws-lambda";
+import { LambdaIntegration } from "aws-cdk-lib/aws-apigateway";
 
 export class ArticleStack extends Stack {
   constructor(scope: Construct, id: string) {
@@ -33,8 +35,24 @@ export class ArticleStack extends Stack {
       uploadMarkdown,
     });
 
-    new WebSocket(this, "websocket", {
+    const websocket = new WebSocket(this, "websocket", {
       restApi: apiGateway.restApi,
+    });
+
+    const demoHandler = new WsDemo(this, "ws-demo", {
+      connectionTable: websocket.connectionTable,
+      webSocketApi: websocket.webSocketApi,
+      webSocketStage: websocket.webSocketStage,
+    });
+
+    apiGateway.restApi.root.addMethod(
+      HttpMethod.POST,
+      new LambdaIntegration(demoHandler.function)
+    );
+
+    new CfnOutput(this, "WebSocketURL", {
+      description: "WebSocket URL",
+      value: websocket.webSocketStage.url,
     });
   }
 }

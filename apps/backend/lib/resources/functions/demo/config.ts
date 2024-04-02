@@ -1,11 +1,14 @@
-import { buildResourceName, getCdkHandlerPath, getRegion } from "@article-gpt/helpers";
+import { ArticleGPTCustomResource } from "@article-gpt/cdk-constructs";
+import {
+  buildResourceName,
+  getCdkHandlerPath,
+  getRegion,
+} from "@article-gpt/helpers";
+import { WebSocketApi, WebSocketStage } from "@aws-cdk/aws-apigatewayv2-alpha";
 import { Duration } from "aws-cdk-lib";
 import { Table } from "aws-cdk-lib/aws-dynamodb";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
-import { ArticleGPTCustomResource } from "../../../custom-resource-lambda/config";
-import { WebSocketApi, WebSocketStage } from "@aws-cdk/aws-apigatewayv2-alpha";
-
 
 interface WsDemoProps {
   connectionTable: Table;
@@ -23,11 +26,11 @@ export class WsDemo extends Construct {
 
     const region = getRegion();
 
-    const WS_API_ENDPOINT = `https://${webSocketApi.apiId}.execute-api.${region}.amazonaws.com/${webSocketStage.stageName}`
+    const WS_API_ENDPOINT = `https://${webSocketApi.apiId}.execute-api.${region}.amazonaws.com/${webSocketStage.stageName}`;
 
     this.function = new ArticleGPTCustomResource(
       this,
-      buildResourceName("ws-demo"),
+      buildResourceName("ws-demo-function"),
       {
         lambdaEntry: getCdkHandlerPath(__dirname),
         timeout: Duration.seconds(30),

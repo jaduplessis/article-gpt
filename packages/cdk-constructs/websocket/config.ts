@@ -1,15 +1,12 @@
 import { buildResourceName, getStage } from "@article-gpt/helpers";
 import { WebSocketApi, WebSocketStage } from "@aws-cdk/aws-apigatewayv2-alpha";
 import { WebSocketLambdaIntegration } from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
-import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
-import { AttributeType } from "aws-cdk-lib/aws-dynamodb";
-import { HttpMethod } from "aws-cdk-lib/aws-lambda";
+import { RestApi } from "aws-cdk-lib/aws-apigateway";
+import { Table } from "aws-cdk-lib/aws-dynamodb";
 import { Construct } from "constructs";
 import { DynamoDBConstruct } from "../dynamodb/config";
 import { WsConnect } from "./functions/connect/config";
-import { WsDemo } from "./functions/demo/config";
 import { WsDisconnect } from "./functions/disconnect/config";
-import { CfnOutput } from "aws-cdk-lib";
 
 interface WebSocketProps {
   restApi: RestApi;
@@ -17,6 +14,8 @@ interface WebSocketProps {
 
 export class WebSocket extends Construct {
   public webSocketApi: WebSocketApi;
+  public connectionTable: Table;
+  public webSocketStage: WebSocketStage;
 
   constructor(scope: Construct, id: string, props: WebSocketProps) {
     super(scope, id);
@@ -25,16 +24,16 @@ export class WebSocket extends Construct {
 
     const stage = getStage();
 
-    const connectionTable = new DynamoDBConstruct(this, "ws-connection-table", {
+    this.connectionTable = new DynamoDBConstruct(this, "ws-connection-table", {
       tableName: buildResourceName("WsConnectionTable"),
     }).table;
 
     const connectHandler = new WsConnect(this, "ws-connect", {
-      connectionTable,
+      connectionTable: this.connectionTable,
     });
 
     const disconnectHandler = new WsDisconnect(this, "ws-disconnect", {
-      connectionTable,
+      connectionTable: this.connectionTable,
     });
 
     this.webSocketApi = new WebSocketApi(this, "websocket-api", {
@@ -52,26 +51,10 @@ export class WebSocket extends Construct {
       },
     });
 
-    const webSocketStage = new WebSocketStage(this, "websocket-stage", {
+    this.webSocketStage = new WebSocketStage(this, "websocket-stage", {
       webSocketApi: this.webSocketApi,
       stageName: stage,
       autoDeploy: true,
-    });
-
-    const demoHandler = new WsDemo(this, "ws-demo", {
-      connectionTable,
-      webSocketApi: this.webSocketApi,
-      webSocketStage,
-    });
-
-    restApi.root.addMethod(
-      HttpMethod.POST,
-      new LambdaIntegration(demoHandler.function)
-    );
-
-    new CfnOutput(this, "WebSocketURL", {
-      description: "WebSocket URL",
-      value: webSocketStage.url,
     });
   }
 }
