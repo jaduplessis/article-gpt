@@ -15,8 +15,6 @@ const apiGwManApiClient = new ApiGatewayManagementApiClient({
 export const handler = async function (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> {
-  console.log(`Received event: ${JSON.stringify(event)}`);
-
   const entityScan = await WsConnectionEntity.scan();
   const connectionItems = entityScan.Items || [];
 

@@ -19,13 +19,11 @@ const apiGwManApiClient = new ApiGatewayManagementApiClient({
 export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
   event: APIGatewayProxyWebsocketEventV2
 ): Promise<APIGatewayProxyResultV2> => {
-  console.log(`Received event: ${JSON.stringify(event)}`);
-
   const connectionId = event.requestContext.connectionId;
 
   const textEncoder = new TextEncoder();
 
-  const resp = await apiGwManApiClient.send(
+  await apiGwManApiClient.send(
     new PostToConnectionCommand({
       ConnectionId: connectionId,
       Data: textEncoder.encode(
@@ -33,7 +31,6 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
       ),
     })
   );
-  console.log(`Sent connectionId: ${JSON.stringify(resp)}`);
 
   return { statusCode: 200 };
 };
