@@ -5,7 +5,9 @@ import {
 import { buildResourceName, getCdkHandlerPath } from "@article-gpt/helpers";
 import { Duration } from "aws-cdk-lib";
 import { Table } from "aws-cdk-lib/aws-dynamodb";
+import { S3EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import { EventType } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 
 interface FunctionProps {
@@ -13,7 +15,7 @@ interface FunctionProps {
   resultsBucket: ResultsBucket;
 }
 
-export class Invoke extends Construct {
+export class S3UploadTrigger extends Construct {
   public function: NodejsFunction;
 
   constructor(
@@ -25,14 +27,17 @@ export class Invoke extends Construct {
 
     this.function = new ArticleGPTCustomResource(
       this,
-      buildResourceName("invoke"),
+      buildResourceName("s3-upload-trigger"),
       {
         lambdaEntry: getCdkHandlerPath(__dirname),
-        timeout: Duration.minutes(5),
-        environment: {
-          RESULTS_BUCKET_NAME: resultsBucket.bucketName,
-        },
+        timeout: Duration.seconds(30),
       }
+    );
+
+    this.function.addEventSource(
+      new S3EventSource(resultsBucket, {
+        events: [EventType.OBJECT_CREATED],
+      })
     );
 
     openAiInvocationsTable.grantReadWriteData(this.function);

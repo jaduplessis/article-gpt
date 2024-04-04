@@ -1,13 +1,13 @@
-import { Bucket, BucketEncryption, StorageClass } from "aws-cdk-lib/aws-s3";
+import { RemovalPolicy } from "aws-cdk-lib";
+import { Bucket } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
-import { Duration, RemovalPolicy } from "aws-cdk-lib";
 
-export interface KnowledgeBaseBucketProps {
+export interface ResultsBucketProps {
   autoDeleteObjects?: boolean;
 }
 
-export class KnowledgeBaseBucket extends Bucket {
-  constructor(scope: Construct, id: string, props?: KnowledgeBaseBucketProps) {
+export class ResultsBucket extends Bucket {
+  constructor(scope: Construct, id: string, props?: ResultsBucketProps) {
     const { autoDeleteObjects } = props ?? {};
 
     super(scope, `${id}-bucket`, {

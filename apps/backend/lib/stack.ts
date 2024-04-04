@@ -5,12 +5,14 @@ import { Construct } from "constructs";
 import {
   ArticleGPTApiGateway,
   DynamoDBConstruct,
+  ResultsBucket,
   WebSocket,
 } from "@article-gpt/cdk-constructs";
 import { LambdaIntegration } from "aws-cdk-lib/aws-apigateway";
 import { HttpMethod } from "aws-cdk-lib/aws-lambda";
 import {
   Invoke,
+  S3UploadTrigger,
   Stitch,
   UploadMarkdown,
   WillV2,
@@ -31,18 +33,36 @@ export class ArticleStack extends Stack {
       }
     );
 
-    const invoke = new Invoke(this, "Invoke", {
-      openAiInvocationsTable: openAiInvocations.table,
-    });
+    const websocket = new WebSocket(this, "websocket");
+
+    const resultsBucket = new ResultsBucket(this, "ResultsBucket");
+
+    const uploadMarkdown = new UploadMarkdown(this, "UploadMarkdown");
 
     const willV2 = new WillV2(this, "WillV2");
+
+    const invoke = new Invoke(this, "Invoke", {
+      openAiInvocationsTable: openAiInvocations.table,
+      resultsBucket,
+    });
 
     const stitch = new Stitch(this, "Stitch", {
       table: openAiInvocations.table,
       invoke: invoke.function,
     });
 
-    const uploadMarkdown = new UploadMarkdown(this, "UploadMarkdown");
+    new S3UploadTrigger(this, "s3-upload-trigger", {
+      openAiInvocationsTable: openAiInvocations.table,
+      resultsBucket,
+    });
+
+    const wsPostResponse = new WsPostResponse(this, "ws-demo", {
+      connectionTable: websocket.connectionTable,
+      resultsBucket,
+      openAiInvocationsTable: openAiInvocations.table,
+      webSocketApi: websocket.webSocketApi,
+      wsApiEndpoint: websocket.wsApiEndpoint,
+    });
 
     const apiGateway = new ArticleGPTApiGateway(this, "api-gateway", {
       stage,
@@ -51,18 +71,9 @@ export class ArticleStack extends Stack {
       uploadMarkdown,
     });
 
-    const websocket = new WebSocket(this, "websocket");
-
-    const demoHandler = new WsPostResponse(this, "ws-demo", {
-      connectionTable: websocket.connectionTable,
-      openAiInvocationsTable: openAiInvocations.table,
-      webSocketApi: websocket.webSocketApi,
-      wsApiEndpoint: websocket.wsApiEndpoint,
-    });
-
     apiGateway.restApi.root.addMethod(
       HttpMethod.POST,
-      new LambdaIntegration(demoHandler.function)
+      new LambdaIntegration(wsPostResponse.function)
     );
 
     new CfnOutput(this, "WebSocketURL", {

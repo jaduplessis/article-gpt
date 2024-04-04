@@ -27,10 +27,10 @@ export class Stitch extends Construct {
         INVOKE_FUNCTION: invoke.functionName,
         SOURCE_FUNCTION: "Stitch",
       },
-      timeout: Duration.minutes(5)
+      timeout: Duration.seconds(30),
     });
 
     invoke.grantInvoke(this.function);
-    table.grantReadWriteData(this.function);
+    table.grantWriteData(this.function);
   }
 }

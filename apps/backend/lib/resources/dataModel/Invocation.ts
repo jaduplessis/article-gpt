@@ -10,11 +10,13 @@ export const InvocationEntity = new Entity({
     status: { type: 'string', required: true },
     sourceFunction: { type: 'string', required: true },
     inputLocation: { type: 'string' },
-    outputLocation: { type: 'string' },
+    outputLocation: { type: 'map' },
     data: { type: 'string' },
   },
   table: OpenAiInvocationsTable,
 } as const);
 
 
-export type IInvocation = EntityItem<typeof InvocationEntity>;
+type DDBInvocation = EntityItem<typeof InvocationEntity>;
+export type IInvocation = Omit<DDBInvocation, 'outputLocation'> & { 
+  outputLocation?: { key: string, bucket: string } };

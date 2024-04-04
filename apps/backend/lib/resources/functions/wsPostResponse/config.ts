@@ -1,4 +1,4 @@
-import { ArticleGPTCustomResource } from "@article-gpt/cdk-constructs";
+import { ArticleGPTCustomResource, ResultsBucket } from "@article-gpt/cdk-constructs";
 import { buildResourceName, getCdkHandlerPath } from "@article-gpt/helpers";
 import { WebSocketApi } from "@aws-cdk/aws-apigatewayv2-alpha";
 import { Duration } from "aws-cdk-lib";
@@ -14,6 +14,7 @@ import { Construct } from "constructs";
 
 interface WsPostResponseProps {
   connectionTable: Table;
+  resultsBucket: ResultsBucket;
   openAiInvocationsTable: Table;
   webSocketApi: WebSocketApi;
   wsApiEndpoint: string;
@@ -27,6 +28,7 @@ export class WsPostResponse extends Construct {
 
     const {
       connectionTable,
+      resultsBucket,
       webSocketApi,
       wsApiEndpoint,
       openAiInvocationsTable,
@@ -63,8 +65,9 @@ export class WsPostResponse extends Construct {
       })
     );
 
-    connectionTable.grantReadWriteData(this.function);
-    openAiInvocationsTable.grantReadWriteData(this.function);
+    connectionTable.grantReadData(this.function);
+    openAiInvocationsTable.grantReadData(this.function);
+    resultsBucket.grantRead(this.function);
     webSocketApi.grantManageConnections(this.function);
   }
 }
