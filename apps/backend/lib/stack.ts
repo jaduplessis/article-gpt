@@ -31,7 +31,9 @@ export class ArticleStack extends Stack {
       }
     );
 
-    const invoke = new Invoke(this, "Invoke");
+    const invoke = new Invoke(this, "Invoke", {
+      openAiInvocationsTable: openAiInvocations.table,
+    });
 
     const willV2 = new WillV2(this, "WillV2");
 

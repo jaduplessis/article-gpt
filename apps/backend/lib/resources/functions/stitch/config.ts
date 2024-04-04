@@ -12,7 +12,6 @@ interface FunctionProps {
   invoke: NodejsFunction;
 }
 
-
 export class Stitch extends Construct {
   public function: NodejsFunction;
 
