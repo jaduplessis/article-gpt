@@ -11,7 +11,7 @@ export interface ModelProps {
 
 
 export interface InvokePayload {
-  genId: string;
+  connectionId: string;
   sourceFunction: string;
   modelProps: ModelProps;
 }

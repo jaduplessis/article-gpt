@@ -1,12 +1,19 @@
+import { InvocationEntity } from "../../dataModel/Invocation";
 import { InvokePayload } from "../utils";
 
 export const handler = async (event: InvokePayload) => {
-  const { genId, sourceFunction, modelProps } = event;
+  const { connectionId, sourceFunction, modelProps } = event;
 
-  console.log(`
-  Received event with id: ${genId} from function: ${sourceFunction} 
+  const resp =`
+  Received event with id: ${connectionId} from function: ${sourceFunction} 
   
-  with modelProps: ${JSON.stringify(modelProps)}`);
+  with modelProps: ${JSON.stringify(modelProps)}`;
 
   // const response = await invoke(modelProps);
+
+  await InvocationEntity.update({
+    connectionId,
+    status: "COMPLETE",
+    data: resp,
+  });
 };

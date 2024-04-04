@@ -14,7 +14,7 @@ import {
   Stitch,
   UploadMarkdown,
   WillV2,
-  WsDemo,
+  WsPostResponse,
 } from "./resources/functions";
 
 export class ArticleStack extends Stack {
@@ -51,8 +51,9 @@ export class ArticleStack extends Stack {
 
     const websocket = new WebSocket(this, "websocket");
 
-    const demoHandler = new WsDemo(this, "ws-demo", {
+    const demoHandler = new WsPostResponse(this, "ws-demo", {
       connectionTable: websocket.connectionTable,
+      openAiInvocationsTable: openAiInvocations.table,
       webSocketApi: websocket.webSocketApi,
       wsApiEndpoint: websocket.wsApiEndpoint,
     });
