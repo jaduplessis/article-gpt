@@ -3,31 +3,22 @@ import { CfnOutput } from "aws-cdk-lib";
 import {
   ApiKey,
   ApiKeySourceType,
-  LambdaIntegration,
   RestApi,
   UsagePlan,
 } from "aws-cdk-lib/aws-apigateway";
-import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
-
-interface RestApiFunctions {
-  function: NodejsFunction;
-}
-
-interface ArticleGPTApiGatewayProps {
-  stage: string;
-  willV2: RestApiFunctions;
-  stitch: RestApiFunctions;
-  uploadMarkdown: RestApiFunctions;
-}
+import { createIntegrations } from "./integrations";
+import { ArticleGPTApiGatewayProps } from "./types";
 
 export class ArticleGPTApiGateway extends Construct {
+  public restApi: RestApi;
+
   constructor(scope: Construct, id: string, props: ArticleGPTApiGatewayProps) {
     super(scope, id);
 
-    const { stage, willV2 } = props;
+    const { stage } = props;
 
-    const api = new RestApi(this, "api-gateway", {
+    this.restApi = new RestApi(this, "api-gateway", {
       restApiName: buildResourceName("api-gateway"),
       deployOptions: {
         stageName: stage,
@@ -44,37 +35,19 @@ export class ArticleGPTApiGateway extends Construct {
     const usagePlan = new UsagePlan(this, "usage-plan", {
       apiStages: [
         {
-          api: api,
-          stage: api.deploymentStage,
+          api: this.restApi,
+          stage: this.restApi.deploymentStage,
         },
       ],
     });
 
     usagePlan.addApiKey(apiKey);
 
-    const willV2endPoint = api.root.addResource("will-v2-generation");
-    const willV2Integration = new LambdaIntegration(willV2.function);
-    willV2endPoint.addMethod("POST", willV2Integration, {
-      apiKeyRequired: true,
-    });
-
-    const stitchEndPoint = api.root.addResource("stitch");
-    const stitchIntegration = new LambdaIntegration(props.stitch.function);
-    stitchEndPoint.addMethod("POST", stitchIntegration, {
-      apiKeyRequired: true,
-    });
-
-    const uploadMarkdownEndPoint = api.root.addResource("upload-markdown");
-    const uploadMarkdownIntegration = new LambdaIntegration(
-      props.uploadMarkdown.function
-    );
-    uploadMarkdownEndPoint.addMethod("POST", uploadMarkdownIntegration, {
-      apiKeyRequired: true,
-    });
+    createIntegrations({ ...props, api: this.restApi});
 
     new CfnOutput(this, "apiKey", {
       description: "API Key",
-      value: apiKey.keyId
+      value: apiKey.keyId,
     });
   }
 }
