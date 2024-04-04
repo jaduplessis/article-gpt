@@ -2,10 +2,20 @@ import { buildResourceName, getStage } from "@article-gpt/helpers";
 import { CfnOutput, Stack } from "aws-cdk-lib";
 import { Construct } from "constructs";
 
-import { ArticleGPTApiGateway, DynamoDBConstruct, WebSocket } from "@article-gpt/cdk-constructs";
-import { Invoke, Stitch, UploadMarkdown, WillV2, WsDemo } from "./resources/functions";
-import { HttpMethod } from "aws-cdk-lib/aws-lambda";
+import {
+  ArticleGPTApiGateway,
+  DynamoDBConstruct,
+  WebSocket,
+} from "@article-gpt/cdk-constructs";
 import { LambdaIntegration } from "aws-cdk-lib/aws-apigateway";
+import { HttpMethod } from "aws-cdk-lib/aws-lambda";
+import {
+  Invoke,
+  Stitch,
+  UploadMarkdown,
+  WillV2,
+  WsDemo,
+} from "./resources/functions";
 
 export class ArticleStack extends Stack {
   constructor(scope: Construct, id: string) {
@@ -13,9 +23,13 @@ export class ArticleStack extends Stack {
 
     const stage = getStage();
 
-    const openAiInvocations = new DynamoDBConstruct(this, "OpenAi-Invocations", {
-      tableName: buildResourceName("OpenAi-Invocations"),
-    });
+    const openAiInvocations = new DynamoDBConstruct(
+      this,
+      "OpenAi-Invocations",
+      {
+        tableName: buildResourceName("OpenAi-Invocations"),
+      }
+    );
 
     const invoke = new Invoke(this, "Invoke");
 
@@ -35,14 +49,12 @@ export class ArticleStack extends Stack {
       uploadMarkdown,
     });
 
-    const websocket = new WebSocket(this, "websocket", {
-      restApi: apiGateway.restApi,
-    });
+    const websocket = new WebSocket(this, "websocket");
 
     const demoHandler = new WsDemo(this, "ws-demo", {
       connectionTable: websocket.connectionTable,
       webSocketApi: websocket.webSocketApi,
-      webSocketStage: websocket.webSocketStage,
+      wsApiEndpoint: websocket.wsApiEndpoint,
     });
 
     apiGateway.restApi.root.addMethod(
