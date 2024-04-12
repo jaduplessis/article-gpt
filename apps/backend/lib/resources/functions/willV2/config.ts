@@ -20,7 +20,7 @@ export class WillV2 extends Construct {
       environment: {
         OPENAI_API_KEY,
       },
-      timeout: Duration.seconds(30),
+      timeout: Duration.minutes(1),
     });
   }
 }

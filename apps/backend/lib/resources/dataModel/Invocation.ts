@@ -6,14 +6,17 @@ export const InvocationEntity = new Entity({
   attributes: {
     PK: { partitionKey: true, hidden: true, prefix: 'INVOCATION#' },
     SK: { sortKey: true, hidden: true, default: 'ROOT' },
-    genId: ['PK', 0,{ type: 'string', required: true }],
+    connectionId: ['PK', 0,{ type: 'string', required: true }],
     status: { type: 'string', required: true },
     sourceFunction: { type: 'string', required: true },
     inputLocation: { type: 'string' },
-    outputLocation: { type: 'string' },
+    outputLocation: { type: 'map' },
+    data: { type: 'string' },
   },
   table: OpenAiInvocationsTable,
 } as const);
 
 
-export type IInvocation = EntityItem<typeof InvocationEntity>;
+type DDBInvocation = EntityItem<typeof InvocationEntity>;
+export type IInvocation = Omit<DDBInvocation, 'outputLocation'> & { 
+  outputLocation?: { key: string, bucket: string } };

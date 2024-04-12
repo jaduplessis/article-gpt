@@ -1,6 +1,6 @@
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { HumanMessage, SystemMessage } from "langchain/schema";
-import { ModelProps } from "./types";
+import { ModelProps } from "../utils/types";
 
 export const invoke = async (parameters: ModelProps): Promise<string> => {
   const {

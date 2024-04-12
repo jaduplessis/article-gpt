@@ -1,4 +1,13 @@
 
+export interface InvokeS3Body {
+  connectionId: string;
+  sourceFunction: string;
+  systemPrompt: string;
+  humanPrompt: string;
+  invokeResponse: string;
+}
+
+
 export interface ModelProps {
   openAIApiKey: string;
   modelName: string;
@@ -11,7 +20,7 @@ export interface ModelProps {
 
 
 export interface InvokePayload {
-  genId: string;
+  connectionId: string;
   sourceFunction: string;
   modelProps: ModelProps;
 }

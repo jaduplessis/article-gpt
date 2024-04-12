@@ -5,12 +5,12 @@ import {
   LambdaClient,
 } from "@aws-sdk/client-lambda";
 import { APIGatewayEvent } from "aws-lambda";
-import { ulid } from "ulid";
+import { InvocationEntity } from "../../dataModel/Invocation";
 import { FileSections, SectionTypes } from "../utils";
 import { llmConfiguration } from "./llm";
-import { InvocationEntity } from "../../dataModel/Invocation";
 
 interface RequestBody {
+  connectionId: string;
   payload: FileSections[];
 }
 
@@ -49,36 +49,34 @@ export const handler = async (event: APIGatewayEvent) => {
   const sourceFunction: string = getEnvVariable("SOURCE_FUNCTION");
 
   const modelParams = llmConfiguration(invokeString);
-  const genId = ulid();
 
   const payload = {
-    genId,
+    connectionId: requestBody.connectionId,
     sourceFunction,
     modelProps: modelParams,
   };
 
   // Save invocation to DynamoDB
   await InvocationEntity.put({
-    genId,
+    connectionId: requestBody.connectionId,
     status: "PENDING",
     sourceFunction,
   });
 
   // Invoke the lambda function
-  const response = await lambda.send(
+  await lambda.send(
     new InvokeCommand({
       FunctionName: invokeFunction,
       Payload: JSON.stringify(payload),
       InvocationType: InvocationType.Event,
     })
   );
-  console.log("Response from model invocation", response);
 
   return {
     statusCode: 200,
     body: JSON.stringify({
-      message: "Model invocation successful",
-      genId,
+      message: "Model invocation successful. Results are incoming.",
+      connectionId: requestBody.connectionId,
     }),
   };
 };
