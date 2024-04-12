@@ -64,19 +64,18 @@ export const handler = async (event: APIGatewayEvent) => {
   });
 
   // Invoke the lambda function
-  const response = await lambda.send(
+  await lambda.send(
     new InvokeCommand({
       FunctionName: invokeFunction,
       Payload: JSON.stringify(payload),
       InvocationType: InvocationType.Event,
     })
   );
-  console.log("Response from model invocation", response);
 
   return {
     statusCode: 200,
     body: JSON.stringify({
-      message: "Model invocation successful",
+      message: "Model invocation successful. Results are incoming.",
       connectionId: requestBody.connectionId,
     }),
   };

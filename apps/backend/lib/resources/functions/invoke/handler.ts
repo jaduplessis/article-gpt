@@ -1,6 +1,7 @@
 import { getEnvVariable, getRegion } from "@article-gpt/helpers";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { InvokePayload, InvokeS3Body } from "../utils";
+import { invoke } from "./llm";
 
 const s3 = new S3Client({
   region: getRegion(),
@@ -9,18 +10,14 @@ const s3 = new S3Client({
 export const handler = async (event: InvokePayload) => {
   const { connectionId, sourceFunction, modelProps } = event;
 
-  const resp = `
-  Received event with id: ${connectionId} from function: ${sourceFunction} 
-  
-  with modelProps: ${JSON.stringify(modelProps)}`;
-
-  // const response = await invoke(modelProps);
+  const response = await invoke(modelProps);
 
   const body: InvokeS3Body = {
     connectionId,
+    sourceFunction,
     systemPrompt: modelProps.systemPrompt,
     humanPrompt: modelProps.humanPrompt,
-    invokeResponse: resp,
+    invokeResponse: response,
   };
 
   const params = {

@@ -6,7 +6,7 @@ import {
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { APIGatewayProxyResultV2, DynamoDBStreamEvent } from "aws-lambda";
 import { TextEncoder } from "util";
-import { getInvocationFromId } from "../utils";
+import { getInvocationFromId, InvokeS3Body } from "../utils";
 
 const apiGwManApiClient = new ApiGatewayManagementApiClient({
   region: getEnvVariable("AWS_REGION"),
@@ -48,6 +48,8 @@ export const handler = async (
       console.error("No body found in S3 object");
       return { statusCode: 400 };
     }
+    const parsedBody: InvokeS3Body = JSON.parse(body);
+    const { invokeResponse } = parsedBody;
 
     const textEncoder = new TextEncoder();
 
@@ -55,7 +57,10 @@ export const handler = async (
       new PostToConnectionCommand({
         ConnectionId: connectionId,
         Data: textEncoder.encode(
-          JSON.stringify({ type: "InvokeResponse", message: body })
+          JSON.stringify({
+            type: "InvokeResponse",
+            invokeResponse,
+          })
         ),
       })
     );

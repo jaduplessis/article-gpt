@@ -1,6 +1,7 @@
 
 export interface InvokeS3Body {
   connectionId: string;
+  sourceFunction: string;
   systemPrompt: string;
   humanPrompt: string;
   invokeResponse: string;
