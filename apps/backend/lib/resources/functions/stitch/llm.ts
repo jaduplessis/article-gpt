@@ -7,10 +7,11 @@ export const llmConfiguration = (humanMessage: string): ModelProps => {
     openAIApiKey: getEnvVariable("OPENAI_API_KEY"),
     modelName: "gpt-4",
     temperature: 0.9,
-    maxTokens: 4500,
+    maxTokens: 3000,
     frequencyPenalty: 0.5,
     systemPrompt,
     humanPrompt: humanMessage,
+    streaming: true,
   };
 
   return modelProps;

@@ -1,3 +1,4 @@
+import { WsPostResponse } from ".";
 
 export interface InvokeS3Body {
   connectionId: string;
@@ -7,7 +8,6 @@ export interface InvokeS3Body {
   invokeResponse: string;
 }
 
-
 export interface ModelProps {
   openAIApiKey: string;
   modelName: string;
@@ -16,11 +16,12 @@ export interface ModelProps {
   frequencyPenalty: number;
   systemPrompt: string;
   humanPrompt: string;
+  streaming: boolean;
 }
-
 
 export interface InvokePayload {
   connectionId: string;
   sourceFunction: string;
   modelProps: ModelProps;
+  wsPostResponse?: WsPostResponse;
 }

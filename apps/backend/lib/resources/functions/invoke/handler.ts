@@ -1,30 +1,65 @@
-import { getEnvVariable, getRegion } from "@article-gpt/helpers";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { InvokePayload, InvokeS3Body } from "../utils";
-import { invoke } from "./llm";
+import { getRegion } from "@article-gpt/helpers";
+import { S3Client } from "@aws-sdk/client-s3";
+import { ChatOpenAI } from "langchain/chat_models/openai";
+import { HumanMessage, SystemMessage } from "langchain/schema";
+import { InvokePayload } from "../utils";
 
 const s3 = new S3Client({
   region: getRegion(),
 });
 
 export const handler = async (event: InvokePayload) => {
-  const { connectionId, sourceFunction, modelProps } = event;
+  const {
+    openAIApiKey,
+    modelName,
+    temperature,
+    maxTokens,
+    frequencyPenalty,
+    systemPrompt,
+    humanPrompt,
+    streaming,
+  } = event.modelProps;
 
-  const response = await invoke(modelProps);
+  const model = new ChatOpenAI({
+    openAIApiKey,
+    modelName,
+    temperature,
+    maxTokens,
+    frequencyPenalty,
+    streaming: true,
+  });
 
-  const body: InvokeS3Body = {
-    connectionId,
-    sourceFunction,
-    systemPrompt: modelProps.systemPrompt,
-    humanPrompt: modelProps.humanPrompt,
-    invokeResponse: response,
-  };
+  const messages: (HumanMessage | SystemMessage)[] = [
+    new SystemMessage(systemPrompt),
+    new HumanMessage(humanPrompt),
+  ];
 
-  const params = {
-    Bucket: getEnvVariable("RESULTS_BUCKET_NAME"),
-    Key: `${connectionId}/${Date.now()}.json`,
-    Body: JSON.stringify(body),
-  };
+  let content = "";
+  switch (streaming) {
+    case true:
+      if (!event.wsPostResponse) {
+        throw new Error("wsPostResponse is required for streaming");
+      }
 
-  await s3.send(new PutObjectCommand(params));
+      const stream = await model.stream(messages);
+      let streamResponse = "";
+
+      for await (const chunk of stream) {
+        streamResponse += chunk.content;
+
+        event.wsPostResponse.sendMessage(streamResponse);
+      }
+
+      content = streamResponse;
+
+      break;
+
+    case false:
+      const response = await model.invoke(messages);
+
+      content = response.content as string;
+      break;
+  }
+
+  return content;
 };

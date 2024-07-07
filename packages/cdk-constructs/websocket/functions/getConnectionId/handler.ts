@@ -8,7 +8,6 @@ import {
   APIGatewayProxyWebsocketEventV2,
   APIGatewayProxyWebsocketHandlerV2,
 } from "aws-lambda";
-import "source-map-support/register";
 import { TextEncoder } from "util";
 
 const apiGwManApiClient = new ApiGatewayManagementApiClient({

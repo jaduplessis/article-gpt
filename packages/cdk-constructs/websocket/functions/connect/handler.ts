@@ -3,7 +3,6 @@ import {
   APIGatewayProxyWebsocketEventV2,
   APIGatewayProxyWebsocketHandlerV2,
 } from "aws-lambda";
-import "source-map-support/register";
 import { WsConnectionEntity } from "../../dataModel/Connection";
 
 export const handler: APIGatewayProxyWebsocketHandlerV2 = async (

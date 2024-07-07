@@ -8,15 +8,12 @@ import {
   ResultsBucket,
   WebSocket,
 } from "@article-gpt/cdk-constructs";
-import { LambdaIntegration } from "aws-cdk-lib/aws-apigateway";
-import { HttpMethod } from "aws-cdk-lib/aws-lambda";
 import {
   Invoke,
   S3UploadTrigger,
   Stitch,
   UploadMarkdown,
   WillV2,
-  WsPostResponse,
 } from "./resources/functions";
 
 export class ArticleStack extends Stack {
@@ -44,6 +41,8 @@ export class ArticleStack extends Stack {
     const invoke = new Invoke(this, "Invoke", {
       openAiInvocationsTable: openAiInvocations.table,
       resultsBucket,
+      wsApiEndpoint: websocket.wsApiEndpoint,
+      webSocketApi: websocket.webSocketApi,
     });
 
     const stitch = new Stitch(this, "Stitch", {
@@ -56,13 +55,13 @@ export class ArticleStack extends Stack {
       resultsBucket,
     });
 
-    const wsPostResponse = new WsPostResponse(this, "ws-demo", {
-      connectionTable: websocket.connectionTable,
-      resultsBucket,
-      openAiInvocationsTable: openAiInvocations.table,
-      webSocketApi: websocket.webSocketApi,
-      wsApiEndpoint: websocket.wsApiEndpoint,
-    });
+    // const wsPostResponse = new WsPostResponse(this, "ws-demo", {
+    //   connectionTable: websocket.connectionTable,
+    //   resultsBucket,
+    //   openAiInvocationsTable: openAiInvocations.table,
+    //   webSocketApi: websocket.webSocketApi,
+    //   wsApiEndpoint: websocket.wsApiEndpoint,
+    // });
 
     const apiGateway = new ArticleGPTApiGateway(this, "api-gateway", {
       stage,
@@ -71,10 +70,10 @@ export class ArticleStack extends Stack {
       uploadMarkdown,
     });
 
-    apiGateway.restApi.root.addMethod(
-      HttpMethod.POST,
-      new LambdaIntegration(wsPostResponse.function)
-    );
+    // apiGateway.restApi.root.addMethod(
+    //   HttpMethod.POST,
+    //   new LambdaIntegration(wsPostResponse.function)
+    // );
 
     new CfnOutput(this, "WebSocketURL", {
       description: "WebSocket URL",

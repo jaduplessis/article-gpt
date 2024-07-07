@@ -6,7 +6,7 @@ import {
 } from "@aws-sdk/client-lambda";
 import { APIGatewayEvent } from "aws-lambda";
 import { InvocationEntity } from "../../dataModel/Invocation";
-import { FileSections, SectionTypes } from "../utils";
+import { FileSections, SectionTypes, WsPostResponse } from "../utils";
 import { llmConfiguration } from "./llm";
 
 interface RequestBody {
@@ -49,19 +49,12 @@ export const handler = async (event: APIGatewayEvent) => {
   const sourceFunction: string = getEnvVariable("SOURCE_FUNCTION");
 
   const modelParams = llmConfiguration(invokeString);
+  const wsPostResponse = new WsPostResponse(requestBody.connectionId);
 
   const payload = {
-    connectionId: requestBody.connectionId,
-    sourceFunction,
     modelProps: modelParams,
+    wsPostResponse,
   };
-
-  // Save invocation to DynamoDB
-  await InvocationEntity.put({
-    connectionId: requestBody.connectionId,
-    status: "PENDING",
-    sourceFunction,
-  });
 
   // Invoke the lambda function
   await lambda.send(

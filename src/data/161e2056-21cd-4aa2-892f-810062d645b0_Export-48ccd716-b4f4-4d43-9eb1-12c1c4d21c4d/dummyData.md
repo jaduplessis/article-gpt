@@ -1,0 +1,11 @@
+---
+- serverless development and event driven architectures naturally suits to slack applications
+- messages and posts are excellent triggers to a state change elsewhere in organisation or automated response.
+- In most cases you won't exceed free tiers and quick deployment development
+- CDK is a great iac tool for this.
+---
+
+- My organisation is multilingual, primarily french and english. Translating each message in channels is tedious. Many simply go unread
+- i was working alongside a colleague developing a GPT translation bot and were looking at more application based outputs for it
+- We realised this could be developed into a full slack application and ran with it
+- Resulted in smooth communication between teams. Here's how we did it
